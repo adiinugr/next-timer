@@ -1,3 +1,5 @@
+"use client"
+
 import { Fragment, useEffect, useState } from "react"
 
 // ** Third Party
@@ -10,11 +12,11 @@ import { IoMdColorPalette, IoMdTime } from "react-icons/io"
 import ColorRadioGroup from "./ColorRadioGroup"
 import TimeTypeSwitch from "./TimeTypeSwitch"
 import useLocalStorage from "@/hooks/useLocalStorage"
-import { useRouter } from "next/navigation"
 
 type Props = {
   isOpen: boolean
   closeModal: () => void
+  id: any
 }
 
 interface IFormInput {
@@ -25,15 +27,26 @@ interface IFormInput {
 
 const colors = ["#F25D52", "#3BB273", "#F7EC59", "#231942"]
 
-const TimerSettingModal = ({ isOpen, closeModal }: Props) => {
+const TimerSettingModalEdit = ({ isOpen, closeModal, id }: Props) => {
   const [selectedColor, setSelectedColor] = useState(colors[0])
   const [isSecond, setIsSecond] = useState(true)
 
   const [value, setValue] = useLocalStorage("timer", "")
 
+  const filteredData = value.filter((val: any) => val.id === id)[0]
+
+  const color = filteredData?.color
+  const timeType = filteredData?.timeType
+  const name = filteredData?.name
+  const timeValue = filteredData?.value
+  const sound = filteredData?.sound
+
+  console.log(filteredData)
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm<IFormInput>()
 
@@ -41,21 +54,28 @@ const TimerSettingModal = ({ isOpen, closeModal }: Props) => {
     setSelectedColor(colors[0])
   }, [])
 
+  useEffect(() => {
+    setSelectedColor(color)
+    setIsSecond(timeType === "second")
+    reset({ name, value: Number(timeValue), sound })
+  }, [color, name, reset, sound, timeType, timeValue])
+
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     const time = {
       id: uuidv4(),
       name: data.name,
       timeType: isSecond ? "second" : "minute",
       value: data.value,
-      sound: `/sound/${data.sound}.mp3`,
+      sound: data.sound,
       color: selectedColor
     }
 
-    if (!value) {
-      setValue([time])
-    } else {
-      setValue([...value, time])
-    }
+    let updatedData = [...value]
+    const updatedDataindex = updatedData.findIndex((val: any) => val.id === id)
+    updatedData[updatedDataindex] = time
+
+    setValue(updatedData)
+
     window.location.reload()
     closeModal()
   }
@@ -186,4 +206,4 @@ const TimerSettingModal = ({ isOpen, closeModal }: Props) => {
   )
 }
 
-export default TimerSettingModal
+export default TimerSettingModalEdit

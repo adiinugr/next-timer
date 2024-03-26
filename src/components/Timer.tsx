@@ -12,8 +12,8 @@ import {
 } from "react-icons/io"
 
 type Props = {
-  time: number
-  setTime: (value: number) => void
+  timerSetting: any
+  setTimerSetting: (value: any) => void
 }
 
 const PlayPauseButton = ({
@@ -48,11 +48,13 @@ const PlayPauseButton = ({
   )
 }
 
-const Timer = ({ time, setTime }: Props) => {
-  const [isMinutes, setIsMinutes] = useState<boolean>(false)
+const Timer = ({ timerSetting, setTimerSetting }: Props) => {
+  const [isMinutes, setIsMinutes] = useState<boolean>(
+    timerSetting.timeType === "minute"
+  )
   const [stopwatchState, setStopWatchState] = useState<string>("stop")
 
-  const [currentTime, setCurrentTime] = useState<number>(10)
+  const [currentTime, setCurrentTime] = useState<number>(timerSetting.value)
 
   const handlePlay = () => {
     setStopWatchState("play")
@@ -64,20 +66,35 @@ const Timer = ({ time, setTime }: Props) => {
 
   const handleStop = () => {
     setStopWatchState("stop")
-    setCurrentTime(time)
+    setCurrentTime(timerSetting.value)
   }
 
   const handleReset = () => {
     setStopWatchState("stop")
     setCurrentTime(0)
-    setTime(0)
+    setTimerSetting({
+      timeType: "second",
+      value: 15,
+      sound: "/sound/case-closed.mp3",
+      color: "#F25D52"
+    })
+  }
+
+  const setTime = (val: number) => {
+    setTimerSetting({
+      timeType: isMinutes ? "minute" : "second",
+      value: val,
+      sound: timerSetting.sound,
+      color: timerSetting.color
+    })
   }
 
   return (
     <div className="w-[340px] aspect-square flex flex-col items-center isolate">
       <button
         onClick={() => setIsMinutes(!isMinutes)}
-        className="w-32 flex items-center justify-center gap-2 bg-tm-red rounded-full px-4 py-2 text-white mb-14"
+        style={{ background: timerSetting.color }}
+        className="w-32 flex items-center justify-center gap-2 rounded-full px-4 py-2 text-white mb-14"
       >
         <HiOutlineSwitchVertical size={20} />
         <span>{isMinutes ? "Minutes" : "Seconds"}</span>
@@ -106,14 +123,14 @@ const Timer = ({ time, setTime }: Props) => {
         <div className="circle">
           <span>
             <Pie
-              time={time}
+              time={timerSetting.value}
               setTime={setTime}
               currentTime={currentTime}
               setCurrentTime={setCurrentTime}
               stopwatchState={stopwatchState}
               setStopWatchState={setStopWatchState}
               isMinutes={isMinutes}
-              color="#F25D52"
+              color={timerSetting.color}
             />
           </span>
         </div>

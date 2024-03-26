@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 // ** Third Party
 import { IoMdSettings } from "react-icons/io"
@@ -8,20 +8,22 @@ import { IoMdSettings } from "react-icons/io"
 // ** Components
 import Timer from "@/components/Timer"
 import TimerSettingList from "@/components/timer-setting/TimerSettingList"
-import TimerSettingDialog from "@/components/timer-setting/TimerSettingModal"
+import TimerSettingModal from "@/components/timer-setting/TimerSettingModal"
+import { useTimerSetting } from "@/context/TimerSettingContext"
 
 export default function Home() {
-  const [time, setTime] = useState<number>(10)
   const [isOpenModal, setisOpenModal] = useState<boolean>(false)
+
+  const { timerSetting, setTimerSetting } = useTimerSetting()
 
   return (
     <main className="pt-40 flex justify-between gap-10 max-w-4xl mx-auto">
       <div className="w-full bg-white rounded-3xl p-14 flex flex-col items-center">
-        <Timer time={time} setTime={setTime} />
+        <Timer timerSetting={timerSetting} setTimerSetting={setTimerSetting} />
 
         <TimerSettingList />
       </div>
-      <TimerSettingDialog
+      <TimerSettingModal
         isOpen={isOpenModal}
         closeModal={() => setisOpenModal(false)}
       />

@@ -2,9 +2,9 @@ import { useState } from "react"
 import { RadioGroup } from "@headlessui/react"
 
 type Props = {
-  colors: { value: string }[]
-  selected: { value: string }
-  setSelected: (value: { value: string }) => void
+  colors: any
+  selected: string
+  setSelected: (value: string) => void
 }
 
 export default function ColorRadioGroup({
@@ -16,11 +16,11 @@ export default function ColorRadioGroup({
     <div>
       <RadioGroup value={selected} onChange={setSelected}>
         <div className="flex gap-2">
-          {colors.map((color) => (
+          {colors.map((color: any) => (
             <RadioGroup.Option
-              key={color.value}
+              key={color}
               value={color}
-              style={{ backgroundColor: color.value }}
+              style={{ backgroundColor: color }}
               className="h-8 aspect-square rounded-full cursor-pointer"
             >
               {({ active, checked }) => (
