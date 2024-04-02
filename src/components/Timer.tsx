@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import Pie from "./Pie"
 import { HiOutlineSwitchVertical } from "react-icons/hi"
 
@@ -53,8 +53,39 @@ const Timer = ({ timerSetting, setTimerSetting }: Props) => {
     timerSetting.timeType === "minute"
   )
   const [stopwatchState, setStopWatchState] = useState<string>("stop")
-
   const [currentTime, setCurrentTime] = useState<number>(timerSetting.value)
+
+  const secondValue = isMinutes ? timerSetting.value * 60 : timerSetting.value
+
+  const [currentSecondValue, setCurrentSecondValue] = useState(secondValue)
+
+  const divisorForMinutes = currentSecondValue % (60 * 60)
+  const minutes = Math.floor(divisorForMinutes / 60)
+
+  const divisorForSeconds = divisorForMinutes % 60
+  const seconds = Math.ceil(divisorForSeconds)
+
+  useEffect(() => {
+    if (stopwatchState === "play" && currentTime > 0) {
+      const interval = setInterval(() => {
+        setCurrentSecondValue(currentSecondValue - 1)
+      }, 1000)
+      return () => clearInterval(interval)
+    }
+
+    if (currentTime === 0) {
+      setStopWatchState("stop")
+    }
+  }, [currentSecondValue, currentTime, stopwatchState])
+
+  useEffect(() => {
+    setCurrentSecondValue(secondValue)
+  }, [secondValue])
+
+  useEffect(() => {
+    setCurrentTime(timerSetting.value)
+    setIsMinutes(timerSetting.timeType === "minute")
+  }, [timerSetting.timeType, timerSetting.value])
 
   const handlePlay = () => {
     setStopWatchState("play")
@@ -67,6 +98,7 @@ const Timer = ({ timerSetting, setTimerSetting }: Props) => {
   const handleStop = () => {
     setStopWatchState("stop")
     setCurrentTime(timerSetting.value)
+    setCurrentSecondValue(secondValue)
   }
 
   const handleReset = () => {
@@ -127,12 +159,17 @@ const Timer = ({ timerSetting, setTimerSetting }: Props) => {
               setTime={setTime}
               currentTime={currentTime}
               setCurrentTime={setCurrentTime}
+              secondValue={secondValue}
+              setCurrentSecondValue={setCurrentSecondValue}
               stopwatchState={stopwatchState}
               setStopWatchState={setStopWatchState}
               isMinutes={isMinutes}
               color={timerSetting.color}
             />
           </span>
+        </div>
+        <div className="bg-white/80 px-4 py-2 font-semibold text-4xl text-gray-600 rounded-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <span>{minutes}</span>:<span>{seconds}</span>
         </div>
       </div>
 

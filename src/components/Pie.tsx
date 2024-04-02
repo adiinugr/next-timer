@@ -11,6 +11,8 @@ interface Pie {
   setTime: (value: number) => void
   currentTime: number
   setCurrentTime: (value: number) => void
+  secondValue: number
+  setCurrentSecondValue: (value: number) => void
   stopwatchState: string
   setStopWatchState: (value: string) => void
   isMinutes: boolean
@@ -22,6 +24,8 @@ const Pie = ({
   setTime,
   currentTime,
   setCurrentTime,
+  secondValue,
+  setCurrentSecondValue,
   stopwatchState,
   setStopWatchState,
   isMinutes,
@@ -60,6 +64,7 @@ const Pie = ({
 
     if (currentTime === 0) {
       setCurrentTime(time)
+      setCurrentSecondValue(secondValue)
       setStopWatchState("stop")
       play()
     }
@@ -67,6 +72,8 @@ const Pie = ({
     currentTime,
     isMinutes,
     play,
+    secondValue,
+    setCurrentSecondValue,
     setCurrentTime,
     setStopWatchState,
     stopwatchState,
@@ -86,9 +93,9 @@ const Pie = ({
         onClick={handleClickTime}
         onMouseLeave={handleMouseLeave}
         onMouseMove={handleMouseMove}
-        disabled={stopwatchState === "play"}
+        disabled={stopwatchState !== "stop"}
         className={`w-full h-full bg-transparent absolute inset-0 ${
-          stopwatchState === "play" ? "cursor-not-allowed" : "cursor-pointer"
+          stopwatchState !== "stop" ? "cursor-not-allowed" : "cursor-pointer"
         } `}
       ></button>
       <svg
