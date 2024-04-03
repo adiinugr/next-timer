@@ -33,7 +33,15 @@ const TimerSettingModalEdit = ({ isOpen, closeModal, id }: Props) => {
 
   const [value, setValue] = useLocalStorage("timer", "")
 
-  const filteredData = value?.filter((val: any) => val.id === id)[0]
+  const filteredData = value
+    ? value?.filter((val: any) => val.id === id)[0]
+    : {
+        timeType: "second",
+        value: 15,
+        sound: "/sound/case-closed.mp3",
+        color: "#F25D52",
+        name: "Default"
+      }
 
   const color = filteredData?.color
   const timeType = filteredData?.timeType
@@ -74,7 +82,7 @@ const TimerSettingModalEdit = ({ isOpen, closeModal, id }: Props) => {
 
     setValue(updatedData)
 
-    // window.location.reload()
+    window.location.reload()
     closeModal()
   }
 

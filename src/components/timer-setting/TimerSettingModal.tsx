@@ -56,7 +56,7 @@ const TimerSettingModal = ({ isOpen, closeModal }: Props) => {
     } else {
       setValue([...value, time])
     }
-    // window.location.reload()
+    window.location.reload()
     closeModal()
   }
 
